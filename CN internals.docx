@@ -1,0 +1,1152 @@
+1)Configure the TCP/IP standard that uses a central server to manage IP addresses and other configuration details for an entire network for the below topology.
+
+
+Step 1 - Configure Router1 as follows
+Router>enable
+	Router#config terminal
+	Router(config)#interface fastethernet0/0
+	Router(config-if)#ip address 20.0.0.2  255.0.0.0
+	Router(config-if)#no shutdown
+	Router(config-if)#exit
+	Router(config)#interface fastethernet0/0
+	Router(config-if)#ip address 10.0.0.2   255.0.0.0
+	Router(config-if)#no shutdown
+	Router(config-if)#exit
+Step 2 - Configure Router2 as follows
+	Router>enable
+	Router#config terminal
+	Router(config)#interface fastethernet0/0
+	Router(config-if)#ip address 10.0.0.3  255.0.0.0
+	Router(config-if)#no shutdown
+	Router(config-if)#exit
+	Router(config)#interface fastethernet1/0
+	Router(config-if)#ip address 30.0.0.2  255.0.0.0
+	Router(config-if)#no shutdown
+	Router(config-if)#exit
+Step 3 - Configure Server as follows
+	Go to Config -> set gateway as "10.0.0.2" -> set ipaddress as "10.0.0.1"
+	Go to Services -> under DHCP 
+	set default gateway as "10.0.0.2"
+	DNS server as "10.0.0.1" 
+	Starting IP as 20.0.0.10
+	Save with Pool name as it is.
+NOTE: After doing this step go to 5,6,7 and then comeback to 4 and follow the same procedure.
+Step 4 - Configure Server as follows
+	Go to Config -> set gateway as "10.0.0.3" -> set ipaddress as "10.0.0.1"
+	Go to Services -> under DHCP 
+	DNS server as "10.0.0.2" 
+	Starting IP as 30.0.0.10
+	Change Pool name and Click add and save.
+Step 5 – Go to Router 1 
+	For interface fastethernet 0/0
+	>ip helper-address 10.0.0.1    //For the network to know about Server. 
+Step 6 – Go to Router 2
+	For interface fastethernet 1/0
+	>ip helper-address 10.0.0.1    //For the network to know about Server.
+Step 7 – Now , go to end device and click Desktop>Ip Configuration>Change to DHCP
+	Do this for both the sides IP address for End devices will be assigned.
+
+
+2) Assume that the systems within lab 1 of CSE department are connected to a LAN through a switch. Also the systems of lab 1 of Maths department are connected to a LAN through a switch. Lab 1 of CSE department has a router R1 which is connected to router R2 of Lab 1 of Maths department. The systems in both the labs are not configured with IP address statically. Provide the IP address dynamically by considering a server at one of the labs. Consider minimum of 4 machines at both labs.
+
+PROCEDURE: 
+
+Step 1 - Configure Router1 as follows
+Router>enable
+	Router#config terminal
+	Router(config)#interface fastethernet0/0
+	Router(config-if)#ip address 10.0.0.1 255.0.0.0
+	Router(config-if)#no shutdown
+	Router(config-if)#exit
+	Router(config)#interface serial2/0
+	Router(config-if)#ip address 20.0.0.1 255.0.0.0
+	Router(config-if)#no shutdown
+	Router(config-if)#exit
+Step 2 - Configure Router1 as follows
+	Router>enable
+	Router#config terminal
+	Router(config)#interface serial2/0
+	Router(config-if)#ip address 20.0.0.2 255.0.0.0
+	Router(config-if)#no shutdown
+	Router(config-if)#exit
+	Router(config)#interface fastethernet0/0
+	Router(config-if)#ip address 30.0.0.1 255.0.0.0
+	Router(config-if)#no shutdown
+	Router(config-if)#exit
+Step 3 - Configure Server as follows
+	Go to Config -> set gateway as "10.0.0.1" -> set ipaddress as "10.0.0.2"
+	Go to Services -> under DHCP 
+	set default gateway as "10.0.0.1"
+	DNS server as "10.0.0.2" 
+	TFTP as "10.0.0.2"
+	Change the poolname (eg - Tej1), click on "add" and then "save".
+Step 4 - Configure "CSE department" PC's as follows
+Go to Config -> under "fastethernet0" set "IP configuration and IPV6 configuration" to DHCP
+Step 5 - Once again configure Server as follows 
+	Go to Services -> under DHCP 
+	set default gateway as "30.0.0.1"
+	DNS server as "10.0.0.2"
+	start IP address "20.0.0.0"
+	maximum number of users as "100"
+	TFTP as "10.0.0.2".
+	Change the poolname (eg - Tej2), click on "add" and then "save".
+Step 6 - Once again configure Router1 as follows
+	Router(config)#interface serial2/0
+	Router(config-if)#ip helper-address 10.0.0.2
+	Router(config-if)#exit
+	Router(config)#router rip
+	Router(config-router)#network 10.0.0.0
+	Router(config-router)#network 20.0.0.0
+	Router(config-router)#exit
+	Router(config)#exit
+Step 7 - Once again configure Router2 as follows
+	Router(config)#interface fastethernet0/0
+	Router(config-if)#ip helper-address 10.0.0.2
+	Router(config-if)#exit
+	Router(config)#router rip
+	Router(config-router)#network 20.0.0.0
+	Router(config-router)#network 30.0.0.0
+	Router(config-router)#exit
+	Router(config)#exit
+
+Step 8 - Configure "MATHS department" PC's as follows
+Go to Config -> under "fastethernet0" set "IP configuration and IPV6 configuration" to DHCP
+
+OUTPUT -  The sytems get assigned the dynamic ip addresses based on the LAN gateway ip address. Here the CSE department PC's get assinged the ip address in the form 10.0.0.x and MATHS department PC's get assigned the ip addrerss in the form 30.0.0.x.
+3)Configure a dynamic routing protocol which uses hop count as a routing metric to find the best path between the source and the destination network for the below topology.
+
+Assign Ip address as 192.168.1.10, 192.168.3.10, 192.168.5.10 for end devices respectively.
+ROUTER1:
+
+	Router>enable
+	Router#config terminal
+	Enter configuration commands, one per line.  End with CNTL/Z.
+	Router(config)#interface fastethernet0/0
+	Router(config-if)#ip address 192.168.1.1 255.255.255.0
+	Router(config-if)#no shutdown
+	
+	
+	
+	
+	
+	
+	Router>enable
+	Router#config terminal
+	
+	Router(config)#interface serial2/0
+	Router(config-if)#ip address 192.168.2.1 255.255.255.0
+	Router(config-if)#encapsulation ppp
+Router(config-if)#clock rate 64000
+Router(config-if)#no shutdown
+Router(config-if)#exit
+	
+
+	ROUTER2:
+	Router>enable
+	Router#config terminal
+	Enter configuration commands, one per line.  End with CNTL/Z.
+	Router(config)#interface serial2/0
+	Router(config-if)#ip address 192.168.2.2 255.255.255.0
+	Router(config-if)#encapsulation ppp
+	Router(config-if)#no shutdown
+	
+
+	Router(config-if)#exit
+	Router(config)#interface serial3/0
+	Router(config-if)#ip address 192.168.4.2 255.255.255.0
+	Router(config-if)#encapsulation ppp
+	Router(config-if)#clock rate 64000
+	Router(config-if)#no shutdown
+
+	Router(config)#interface fastethernet0/0
+	Router(config-if)#ip address 192.168.3.1 255.255.255.0
+	Router(config-if)#no shutdown
+
+	Router#config terminal
+	Enter configuration commands, one per line.  End with CNTL/Z.
+	Router(config)#interface serial2/0
+	Router(config-if)#ip address 192.168.4.1 255.255.255.0
+	Router(config-if)#encapsulation ppp
+	Router(config-if)#clock rate 64000
+	This command applies only to DCE interfaces
+	Router(config-if)#no shutdown
+	Router(config-if)#exit
+	Router(config)#interface fastethernet0/0
+	Router(config-if)#ip address 192.168.4.1 255.255.255.0
+	Router(config-if)#encapsulation ppp
+	Router(config-if)#clock rate 64000
+	Router(config-if)#no shutdown
+	
+
+	
+
+	RIP CONFIGURATION:
+	ROUTER1:
+	Router(config)#router rip
+	Router(config-router)#network 192.168.1.0
+	Router(config-router)#network 192.168.2.0
+	Router(config-router)#exit
+	Router(config)#exit
+	ROUTER2:
+	Router(config)#router rip
+	Router(config-router)#network 192.168.2.0
+	Router(config-router)#network 192.168.3.0
+Router(config-router)#network 192.168.4.0
+	Router(config-router)#exit
+	ROUTER3:
+	Router(config)#router rip
+	Router(config-router)#network 192.168.4.0
+	Router(config-router)#network 192.168.5.0
+	Router(config-router)#exit
+	
+
+
+4) Consider XYZ Bank’s Hanumanthanagar branch and Jayanagar branch. At both branches the systems are connected using LAN. Both the branches have a default gateway configured and the information sent from Hanumanthanagar branch systems to Jayanagar branch systems travels through an intermediate router. The routers used have dynamic routing protocol installed. This dynamic routing protocol works in such a way that the routers first identify the entire topology using advertisement packets and then the data is transmitted. Identify the protocol and simulate the same for the environment described above. The number of systems at Hanumanthanagar branch is 5 and at Jayanagar branch is 4.
+
+NOTE: Assign gateway for all end devices i.e., ip address of nearest router as gateway of end devices
+
+
+Cofigure ip addres to all interfaces
+In Router R1,
+R1(config)#interface fastethernet 2/0
+R1(config-if)#ip address 10.0.0.1 255.0.0.0
+R1(config-if)#no shutdown
+R1(config-if)#exit
+R1(config)#interface serial 1/0
+R1(config-if)#ip address 20.0.0.1 255.0.0.0
+R1(config-if)#encapsulation ppp
+R1(config-if)#clock rate 64000
+R1(config-if)#no shutdown
+R1(config-if)#exit
+In Router R2,
+R2(config)#interface serial 1/0
+R2(config-if)#ip address 20.0.0.2 255.0.0.0
+R2(config-if)#encapsulation ppp
+R2(config-if)#no shutdown
+R2(config-if)#exit
+
+R2(config)#interface serial 1/1
+R2(config-if)#ip address 30.0.0.1 255.0.0.0
+R2(config-if)#encapsulation ppp
+R2(config-if)#clock rate 64000
+R2(config-if)#no shutdown
+R2(config-if)#exit
+In Router R3,
+R3(config)#
+R3(config)#interface serial 1/0
+R3(config-if)#ip address 30.0.0.2 255.0.0.0
+R3(config-if)#encapsulation ppp
+R3(config-if)#no shutdown
+R3(config-if)#exit
+R3(config)#
+R3(config)#interface fastethernet 2/0
+R3(config-if)#ip address 40.0.0.1 255.0.0.0
+R3(config-if)#no shutdown
+R3(config-if)#exit
+Step 3:Now,Enable ip routing by configuring ospf routing protocol in all routers,
+In Router R1,
+R1(config)#router ospf 1
+R1(config-router)#router-id 1.1.1.1
+R1(config-router)#network 10.0.0.0 0.255.255.255 area 3
+R1(config-router)#network 20.0.0.0 0.255.255.255 area 1
+R1(config-router)#exit
+In Router R2,
+R2(config)#router ospf 1
+R2(config-router)#router-id 2.2.2.2
+R2(config-router)#network 20.0.0.0 0.255.255.255 area 1
+R2(config-router)#network 30.0.0.0 0.255.255.255 area 0
+R2(config-router)#exit
+In Router R3,
+R3(config)#router ospf 1
+R3(config-router)#router-id 3.3.3.3
+R3(config-router)#network 30.0.0.0 0.255.255.255 area 0
+R3(config-router)#network 40.0.0.0 0.255.255.255 area 2
+R3(config-router)#exit
+
+You have to configure router id when we configure ospf.It is used to identify the router
+Step 4:Now check routing table of R1,
+Router#show ip route
+Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
+D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+E1 - OSPF external type 1, E2 - OSPF external type 2
+i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+* - candidate default, U - per-user static route, o - ODR
+P - periodic downloaded static route
+Gateway of last resort is not set
+C 10.0.0.0/8 is directly connected, FastEthernet2/0
+C 20.0.0.0/8 is directly connected, Serial1/0
+O IA 40.0.0.0/8 [110/129] via 20.0.0.2, 00:04:23, Serial1/0
+O IA 30.0.0.0/8 [110/128] via 20.0.0.2, 00:07:29, Serial1/0
+Here,R2 knows Area 0.Network 20.0.0.0 connected to R2 from R1,So R1 learns networks 
+through this network.
+R3(config)#router ospf 1, Here, 1 is Process ID, it can be 1-65535.It initializes ospf 
+process.
+There must be one interface up to keep ospf process up.So its better to configure loopback 
+address to routers.It is a virtual interface never goes down once we configured.
+R1(config-if)#interface loopback 0
+R1(config-if)#ip add 172.16.1.252 255.255.0.0
+R1(config-if)#no shutdown
+R2(config-if)#interface loopback 0
+R2(config-if)#ip add 172.16.1.253 255.255.0.0
+R2(config-if)#no shutdown
+R3(config-if)#interface loopback 0
+R3(config-if)#ip add 172.16.1.254 255.255.0.0
+R3(config-if)#no shutdown
+Step 5:Now ,Check Routing table of R3,
+R3#show ip route
+Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
+D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+E1 - OSPF external type 1, E2 - OSPF external type 2
+i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+* - candidate default, U - per-user static route, o - ODR
+P - periodic downloaded static route
+Gateway of last resort is not set
+O IA 20.0.0.0/8 [110/128] via 30.0.0.1, 00:18:58, Serial1/0
+C 40.0.0.0/8 is directly connected, FastEthernet2/0
+C 30.0.0.0/8 is directly connected, Serial1/0
+Here,R3 doesn't know about the area 3 so we have to create virtual link between R1 and 
+R2
+Step 6:Create virtual link between R1,R2,by this we create a virtual link to connect area 3 
+to area 0.
+In Router R1,
+R1(config)#router ospf 1
+R1(config-router)#area 1 virtual-link 2.2.2.2
+R1(config-router)#
+*Feb 10 10:29:23.767: %OSPF-5-ADJCHG: Process 1, Nbr 2.2.2.2 on OSPF_VL0
+from LOADING to FULL, Loadi
+ng Done
+In Rotuer R2,
+*Feb 10 10:28:59.543: %OSPF-4-ERRRCV: Received invalid packet: mismatch area
+ID, from backbone area must be virtual-link but not found from 20.0.0.1, Serial1/0a
+*Feb 10 10:29:09.535: %OSPF-4-ERRRCV: Received invalid packet: mismatch area
+ID, from backbone area must be virtual-link but not found from 20.0.0.1,
+Serial1/0.1.1
+R2(config-router)#
+R2(config-router)#area 1 virtual-link 1.1.1.1
+R2(config-router)#exit
+R2(config)#
+*Feb 10 10:29:19.667: %OSPF-5-ADJCHG: Process 1, Nbr 1.1.1.1 on OSPF_VL0
+from LOADING to FULL, Loadi
+ng Done
+Step 7:R2 and R3 get updates about Area 3 .Now,Check routing table of R3,
+ R3#show ip route
+Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
+D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+E1 - OSPF external type 1, E2 - OSPF external type 2
+i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+* - candidate default, U - per-user static route, o - ODR
+P - periodic downloaded static route
+Gateway of last resort is not set
+O IA 20.0.0.0/8 [110/128] via 30.0.0.1, 00:01:56, Serial1/0
+C 40.0.0.0/8 is directly connected, FastEthernet2/0
+O IA 10.0.0.0/8 [110/129] via 30.0.0.1, 00:01:56, Serial1/0
+C 30.0.0.0/8 is directly connected, Serial1/0
+
+
+5) Design a network to show how interior gateway protocol works which in turn uses Link state routing approach.  Assume 6 nodes, with minimum four area boundaries defined.
+
+ 
+
+Step 1 : Configure the topology.
+
+Step 2:Cofigure ip addres to all interfaces 
+	In Router R1,
+	Router>enable
+	Router#configure terminal
+	Enter configuration commands, one per line.  End with CNTL/Z.
+	Router(config)#interface fastEthernet 0/0
+	Router(config-if)#ip address 10.0.0.1 255.0.0.0
+	Router(config-if)#no shutdown
+	
+
+	Router(config)#interface serial 2/0
+	Router(config-if)#ip address 20.0.0.1 255.0.0.0
+	Router(config-if)#encapsulation ppp
+	Router(config-if)#no shutdown
+	In Router R2,
+	Router>enable
+	Router#config T
+	Enter configuration commands, one per line.  End with CNTL/Z.
+	Router(config)#interface serial 2/0
+	Router(config-if)#ip address 20.0.0.2 255.0.0.0
+	Router(config-if)#encapsulation ppp
+	Router(config-if)#no shutdown
+	
+
+	Router(config)#interface serial 3/0
+	Router(config-if)#ip address 30.0.0.1 255.0.0.0
+	Router(config-if)#encapsulation ppp
+	Router(config-if)#no shutdown
+	
+
+	In Router R3,
+	Router>enable
+	Router#configure terminal
+	Enter configuration commands, one per line.  End with CNTL/Z.
+	Router(config)#interface serial 3/0
+	Router(config-if)#ip address 30.0.0.2 255.0.0.0
+	Router(config-if)#encapsulation ppp
+	Router(config-if)#no shutdown
+	
+
+	Router>enable
+	Router#configure terminal
+	Enter configuration commands, one per line.  End with CNTL/Z.
+	Router(config)#interface serial 3/0
+	Router(config-if)#ip address 40.0.0.1 255.0.0.0
+	Router(config-if)#encapsulation ppp
+	Router(config-if)#no shutdown
+	
+
+	In router R4,
+	Router>enable
+	Router#configure terminal
+	Enter configuration commands, one per line.  End with CNTL/Z.
+	Router(config)#interface serial 3/0
+	Router(config-if)#ip address 40.0.0.2 255.0.0.0
+	Router(config-if)#encapsulation ppp
+	Router(config-if)#no shutdown
+	
+
+	Router(config)#interface fastEthernet 0/0
+	Router(config-if)#ip address 50.0.0.1 255.0.0.0
+	Router(config-if)#no shutdown
+	
+
+	Step 3:Now,Enable ip routing by configuring ospf routing protocol in all routers,
+	 In Router R1, 
+	Router(config)#router ospf 1
+	Router(config-router)#router-id 1.1.1.1
+	Router(config-router)#network 10.0.0.0 0.255.255.255 area 2
+	Router(config-router)#network 20.0.0.0 0.255.255.255 area 1
+	Router(config-router)#exit
+	
+
+	In Router R2,
+	Router(config)#router ospf 1
+	Router(config-router)#router-id 2.2.2.2
+	Router(config-router)#network 20.0.0.0 0.255.255.255 area 1
+	Router(config-router)#network 30.0.0.0 0.255.255.255 area 0
+	Router(config-router)#exit
+	
+
+	In Router R3,
+	Router(config)#router ospf 1
+	Router(config-router)#router-id 3.3.3.3
+	Router(config-router)#network 30.0.0.0 0.255.255.255 area 0
+	Router(config-router)#network 40.0.0.0 0.255.255.255 area 3
+	Router(config-router)#exit
+	
+
+	In Router R4,
+	Router(config)#router ospf 1
+	Router(config-router)#router-id 3.3.3.3
+	Router(config-router)#network 400.0.0.0 0.255.255.255 area 3
+	Router(config-router)#network 50.0.0.0 0.255.255.255 area 4
+	Router(config-router)#exit
+	
+
+	
+
+	Step 4:Now check routing table of R1,
+	
+
+	Router#show ip route
+	Router>show ip route
+	Codes: C - connected, S - static, I - IGRP, R - RIP, M - mobile, B - BGP
+	       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+	       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+	       E1 - OSPF external type 1, E2 - OSPF external type 2, E - EGP
+	       i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+	       * - candidate default, U - per-user static route, o - ODR
+	       P - periodic downloaded static route
+	
+
+	Gateway of last resort is not set
+	
+
+	C    10.0.0.0/8 is directly connected, FastEthernet0/0
+	     20.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+	C       20.0.0.0/8 is directly connected, Serial2/0
+	C       20.0.0.2/32 is directly connected, Serial2/0
+	In router 1,
+	R1(config-if)#interface loopback 0
+	 R1(config-if)#ip add 172.16.1.252 255.255.0.0
+	 R1(config-if)#no shutdown 
+	In router 2,
+	R2(config-if)#interface loopback 0 
+	R2(config-if)#ip add 172.16.1.253 255.255.0.0
+	 R2(config-if)#no shutdown 
+	In router 3,
+	R3(config-if)#interface loopback 0
+	 R3(config-if)#ip add 172.16.1.254 255.255.0.0 
+	R3(config-if)#no shutdown
+	 In router 4,
+	R4(config-if)#interface loopback 0
+	 R4(config-if)#ip add 172.16.1.255 255.255.0.0 
+	R3(config-if)#no shutdown
+	
+
+	
+
+	
+
+	Step 5:Now ,Check Routing table of R3,
+	Router>show ip route
+	Codes: C - connected, S - static, I - IGRP, R - RIP, M - mobile, B - BGP
+	       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+	       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+	       E1 - OSPF external type 1, E2 - OSPF external type 2, E - EGP
+	       i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+	       * - candidate default, U - per-user static route, o - ODR
+	       P - periodic downloaded static route
+	
+
+	Gateway of last resort is not set
+	
+
+	O IA 10.0.0.0/8 [110/129] via 30.0.0.1, 00:05:03, Serial3/0
+	O IA 20.0.0.0/8 [110/128] via 30.0.0.1, 00:05:18, Serial3/0
+	     30.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+	C       30.0.0.0/8 is directly connected, Serial3/0
+	C       30.0.0.1/32 is directly connected, Serial3/0
+	C    40.0.0.0/8 is directly connected, FastEthernet1/0Codes: C - connected, S - static, I - IGRP, R - RIP, M - mobile, B - BGP
+	
+
+	Step 6:Create virtual link between R1,R2,by this we create a virtual link to connect area 3 to area 0.
+	In Router R1,
+	Router(config)#router ospf 1
+	Router(config-router)#area 1 virtual-link 2.2.2.2
+	Router(config-router)#exit
+	
+
+	In Rotuer R2,
+	Router(config)#router ospf 1
+	Router(config-router)# area 1 virtual-link 1.1.1.1
+	Router(config-router)#exit
+	
+
+	In Router R3,
+	Router(config)#router ospf 1
+	Router(config-router)#area 3 virtual-link 4.4.4.4
+	Router(config-router)#exit
+	
+
+	In Rotuer R4,
+	Router(config)#router ospf 1
+	Router(config-router)# area 1 virtual-link 3.3.3.3
+	Router(config-router)#exit
+	
+
+	
+
+	
+
+	Step 7:R2 and R3 get updates about Area 3 .Now,Check routing table of R3,
+	Router#show ip route
+	Router>show ip route
+	Codes: C - connected, S - static, I - IGRP, R - RIP, M - mobile, B - BGP
+	       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+	       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+	       E1 - OSPF external type 1, E2 - OSPF external type 2, E - EGP
+	       i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+	       * - candidate default, U - per-user static route, o - ODR
+	       P - periodic downloaded static route
+	
+
+	Gateway of last resort is not set
+	
+
+	O IA 10.0.0.0/8 [110/129] via 30.0.0.1, 00:05:03, Serial3/0
+	O IA 20.0.0.0/8 [110/128] via 30.0.0.1, 00:05:18, Serial3/0
+	     30.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+	C       30.0.0.0/8 is directly connected, Serial3/0
+	C       30.0.0.1/32 is directly connected, Serial3/0
+	C    40.0.0.0/8 is directly connected, FastEthernet1/0
+	
+
+	Step 8:Check connectivity between host 10.0.0.10 to 50.0.0.10
+	PC>ping 50.0.0.10
+	
+
+	Pinging 50.0.0.10 with 32 bytes of data:
+	
+
+	Reply from 50.0.0.10: bytes=32 time=6ms TTL=124
+	Reply from 50.0.0.10: bytes=32 time=5ms TTL=124
+	Reply from 50.0.0.10: bytes=32 time=5ms TTL=124
+	Reply from 50.0.0.10: bytes=32 time=5ms TTL=124
+	
+
+	Ping statistics for 50.0.0.10:
+	    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+	Approximate round trip times in milli-seconds:
+	    Minimum = 5ms, Maximum = 6ms, Average = 5ms
+
+6) Consider ABC Bank’s Hanumanthnagar branch and Gandhibazar branch. At both branches the systems are connected using LAN. Both the branches have a default gateway configured and the information sent from Hanumanthnagar branch systems to Gandhibazar branch systems travels through two intermediate routers. The routers used have dynamic routing protocol installed. The protocol works based on hop count measure. Identify the protocol and simulate the same for the environment described above. The number of systems at Hanumanthnagar branch is 5 and at Gandhibazar branch is 4.(No DHCP as in Topology)
+		
+
+
+
+THE DHCP IS NOT REQUIRED AS IN TOPOLOGY.
+
+
+ROUTER1:
+
+	Router>enable
+	Router#config terminal
+	Enter configuration commands, one per line.  End with CNTL/Z.
+	Router(config)#interface fastethernet0/0
+	Router(config-if)#ip address 10.0.0.1 255.0.0.0
+	Router(config-if)#no shutdown
+	
+	
+	
+	
+	
+	
+	Router>enable
+	Router#config terminal
+	
+	Router(config)#interface serial2/0
+	Router(config-if)#ip address 20.0.0.1 255.0.0.0
+	Router(config-if)#encapsulation ppp
+Router(config-if)#clock rate 64000
+Router(config-if)#no shutdown
+Router(config-if)#exit
+	
+
+	ROUTER2:
+	Router>enable
+	Router#config terminal
+	Enter configuration commands, one per line.  End with CNTL/Z.
+	Router(config)#interface serial2/0
+	Router(config-if)#ip address 20.0.0.2 255.0.0.0
+	Router(config-if)#encapsulation ppp
+	Router(config-if)#no shutdown
+	
+
+	Router(config-if)#exit
+	Router(config)#interface serial3/0
+	Router(config-if)#ip address 30.0.0.1 255.0.0.0
+	Router(config-if)#encapsulation ppp
+	Router(config-if)#clock rate 64000
+	Router(config-if)#no shutdown
+	
+
+	ROUTER3:
+	Router>enable
+	Router#config terminal
+	Enter configuration commands, one per line.  End with CNTL/Z.
+	Router(config)#interface serial2/0
+	Router(config-if)#ip address 30.0.0.2 255.0.0.0
+	Router(config-if)#encapsulation ppp
+	Router(config-if)#clock rate 64000
+	This command applies only to DCE interfaces
+	Router(config-if)#no shutdown
+	Router(config-if)#exit
+	Router(config)#interface serial3/0
+	Router(config-if)#ip address 40.0.0.1 255.0.0.0
+	Router(config-if)#encapsulation ppp
+	Router(config-if)#clock rate 64000
+	Router(config-if)#no shutdown
+	
+
+	ROUTER4:
+	Router>enable
+	Router#config terminal
+	Enter configuration commands, one per line.  End with CNTL/Z.
+	Router(config)#interface serial2/0
+	Router(config-if)#ip address 40.0.0.2 255.0.0.0
+	Router(config-if)#encapsulation ppp
+	Router(config-if)#no shutdown
+	Router(config-if)#exit
+	Router(config)#interface fastethernet0/0 
+	Router(config-if)#ip address 50.0.0.1 255.0.0.0
+	Router(config-if)#no shutdown
+	Router(config-if)#ip address 60.0.0.2 255.0.0.0
+	Router(config-if)#no shutdown
+	
+
+	RIP CONFIGURATION:
+	ROUTER1:
+	Router(config)#router rip
+	Router(config-router)#network 10.0.0.0
+	Router(config-router)#network 20.0.0.0
+	Router(config-router)#exit
+	Router(config)#exit
+	ROUTER2:
+	Router(config)#router rip
+	Router(config-router)#network 20.0.0.0
+	Router(config-router)#network 30.0.0.0
+	Router(config-router)#exit
+	ROUTER3:
+	Router(config)#router rip
+	Router(config-router)#network 30.0.0.0
+	Router(config-router)#network 40.0.0.0
+	Router(config-router)#exit
+	ROUTER4:
+	Router(config-if)#exit
+	Router(config)#router rip
+	Router(config-router)#network 40.0.0.0
+	Router(config-router)#network 50.0.0.0
+	Router(config-router)#exit
+
+	
+
+
+7)Create a simple topology of four nodes (Node1, Node2, Node3, Node4) separated by a point-to-point link. Setup a UdpClient on Node1 and a UdpServer on Node2. Let the data rate be set 8 Mbps and the delay be 3ms. Now Setup another UdpClient on Node4 and a server instance on Node3. Let the data rate be set 7 Mbps and the delay be 1 ms. Set the parameters for the clients. Run the simulation and observe the results.
+
+#include "ns3/core-module.h"
+#include "ns3/network-module.h"
+#include "ns3/internet-module.h"
+#include "ns3/point-to-point-module.h"
+#include "ns3/applications-module.h"
+
+using namespace ns3;
+
+NS_LOG_COMPONENT_DEFINE ("FirstScriptExample");
+
+int main (int argc, char *argv[])
+{
+  
+  Time::SetResolution (Time::NS);
+  LogComponentEnable ("UdpEchoClientApplication", LOG_LEVEL_INFO);
+  LogComponentEnable ("UdpEchoServerApplication", LOG_LEVEL_INFO);
+
+  NodeContainer nodes;
+  nodes.Create (2);
+  
+  NodeContainer nodes2;
+  nodes2.Create (2);
+
+  NodeContainer nodes1;
+  nodes1.Add(nodes.Get(1));
+  nodes1.Add(nodes2.Get(0));
+
+  PointToPointHelper pointToPoint;
+  pointToPoint.SetDeviceAttribute ("DataRate", StringValue ("8Mbps"));
+  pointToPoint.SetChannelAttribute ("Delay", StringValue ("3ms"));
+
+  PointToPointHelper pointToPoint2;
+  pointToPoint2.SetDeviceAttribute ("DataRate", StringValue ("7Mbps"));
+  pointToPoint2.SetChannelAttribute ("Delay", StringValue ("1ms"));
+
+  PointToPointHelper pointToPoint1;
+  pointToPoint1.SetDeviceAttribute ("DataRate", StringValue ("9Mbps"));
+  pointToPoint1.SetChannelAttribute ("Delay", StringValue ("2ms"));
+
+  NetDeviceContainer devices;
+  devices = pointToPoint.Install (nodes);
+
+  NetDeviceContainer devices2;
+  devices2 = pointToPoint2.Install (nodes2);
+  
+  NetDeviceContainer devices1;
+  devices1 = pointToPoint1.Install (nodes1);
+
+  InternetStackHelper stack;
+  stack.Install (nodes);
+  stack.Install (nodes2);
+
+  Ipv4AddressHelper address,address2,address1;
+  address.SetBase ("10.1.1.0", "255.255.255.0");
+  address2.SetBase ("10.1.2.0", "255.255.255.0");
+  address1.SetBase ("10.1.3.0", "255.255.255.0");
+
+  Ipv4InterfaceContainer interfaces = address.Assign (devices);
+  Ipv4InterfaceContainer interfaces2 = address2.Assign (devices2);
+  Ipv4InterfaceContainer interfaces1 = address1.Assign (devices1);
+
+  UdpEchoServerHelper echoServer (9);
+
+  ApplicationContainer serverApps = echoServer.Install (nodes.Get (1));
+  serverApps.Start (Seconds (1.0));
+  serverApps.Stop (Seconds (10.0));
+
+  UdpEchoClientHelper echoClient (interfaces.GetAddress (1), 9);
+  echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
+  echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
+  echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
+
+  ApplicationContainer clientApps = echoClient.Install (nodes.Get (0));
+  clientApps.Start (Seconds (2.0));
+  clientApps.Stop (Seconds (10.0));
+
+  UdpEchoServerHelper echoServer2 (10);
+
+  ApplicationContainer serverApps2 = echoServer2.Install (nodes2.Get (0));
+  serverApps2.Start (Seconds (1.0));
+  serverApps2.Stop (Seconds (10.0));
+
+  UdpEchoClientHelper echoClient2 (interfaces2.GetAddress (0), 10);
+  echoClient2.SetAttribute ("MaxPackets", UintegerValue (1));
+  echoClient2.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
+  echoClient2.SetAttribute ("PacketSize", UintegerValue (1024));
+
+  ApplicationContainer clientApps2= echoClient2.Install (nodes2.Get (1));
+  clientApps2.Start (Seconds (3.0));
+  clientApps2.Stop (Seconds (10.0));
+
+  Simulator::Run ();
+  Simulator::Destroy ();
+  return 0;
+}
+
+8)Createe a simple topology of four nodes (Node1, Node2, Node3, Node4) separated by a point-to-point link. Setup a UdpClient on Node1 and a UdpServer on Node2. Let the data rate be set 5 Mbps and the delay be 2 ms. Now Setup another UdpClient on Node3 & Node 4 and a server instance on Node2. Let the data rate be set 7 Mbps and the delay be 1 ms. Set the parameters for the clients. Run the simulation and observe the results.
+
+
+#include "ns3/core-module.h"
+#include "ns3/network-module.h"
+#include "ns3/internet-module.h"
+#include "ns3/point-to-point-module.h"
+#include "ns3/applications-module.h"
+
+using namespace ns3;
+
+NS_LOG_COMPONENT_DEFINE ("FirstScriptExample");
+
+int
+main (int argc, char *argv[])
+{
+  CommandLine cmd;
+  cmd.Parse (argc, argv);
+
+  Time::SetResolution (Time::NS);
+  LogComponentEnable ("UdpEchoClientApplication", LOG_LEVEL_INFO);
+  LogComponentEnable ("UdpEchoServerApplication", LOG_LEVEL_INFO);
+
+  NodeContainer nodes;
+  nodes.Create (4); //3 nodes
+
+  PointToPointHelper pointToPoint;
+  pointToPoint.SetDeviceAttribute ("DataRate", StringValue ("5Mbps"));
+  pointToPoint.SetChannelAttribute ("Delay", StringValue ("2ms"));
+
+  PointToPointHelper pointToPoint1;
+  pointToPoint1.SetDeviceAttribute ("DataRate", StringValue ("7Mbps"));
+  pointToPoint1.SetChannelAttribute ("Delay", StringValue ("1ms"));
+
+  PointToPointHelper pointToPoint2;
+  pointToPoint2.SetDeviceAttribute ("DataRate", StringValue ("7Mbps"));
+  pointToPoint2.SetChannelAttribute ("Delay", StringValue ("1ms"));
+
+  NetDeviceContainer devices,devices1,devices2;
+  devices = pointToPoint.Install (nodes.Get(0),nodes.Get(1));
+  devices1 = pointToPoint1.Install (nodes.Get(1),nodes.Get(2));
+  devices2 = pointToPoint2.Install (nodes.Get(1),nodes.Get(3));
+
+  InternetStackHelper stack;
+  stack.Install (nodes);
+
+  Ipv4AddressHelper address,address1,address2;
+  address.SetBase ("10.1.1.0", "255.255.255.0");
+   address1.SetBase ("10.1.2.0", "255.255.255.0");
+   address2.SetBase ("10.1.3.0", "255.255.255.0");
+
+  Ipv4InterfaceContainer interfaces = address.Assign (devices);
+  Ipv4InterfaceContainer interfaces1 = address1.Assign (devices1);
+  Ipv4InterfaceContainer interfaces2 = address2.Assign (devices2);
+
+  UdpEchoServerHelper echoServer (9);
+  UdpEchoServerHelper echoServer1 (10);
+  UdpEchoServerHelper echoServer2 (11);
+
+  ApplicationContainer serverApps = echoServer.Install (nodes.Get (1));
+  serverApps.Start (Seconds (1.0));
+  serverApps.Stop (Seconds (10.0));
+   ApplicationContainer serverApps1 = echoServer1.Install (nodes.Get (1));
+  serverApps.Start (Seconds (1.0));
+  serverApps.Stop (Seconds (10.0));
+    ApplicationContainer serverApps2 = echoServer2.Install (nodes.Get (1));
+  serverApps.Start (Seconds (1.0));
+  serverApps.Stop (Seconds (10.0));
+
+  UdpEchoClientHelper echoClient (interfaces.GetAddress (1), 9);
+  echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
+  echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
+  echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
+
+  UdpEchoClientHelper echoClient1 (interfaces1.GetAddress (0), 10);
+  echoClient1.SetAttribute ("MaxPackets", UintegerValue (1));
+  echoClient1.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
+  echoClient1.SetAttribute ("PacketSize", UintegerValue (1024));
+
+  UdpEchoClientHelper echoClient2 (interfaces2.GetAddress (0), 11);
+  echoClient2.SetAttribute ("MaxPackets", UintegerValue (1));
+  echoClient2.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
+  echoClient2.SetAttribute ("PacketSize", UintegerValue (1024));
+
+  ApplicationContainer clientApps = echoClient.Install (nodes.Get (0));
+  clientApps.Start (Seconds (2.0));
+  clientApps.Stop (Seconds (10.0));
+  ApplicationContainer clientApps1 = echoClient1.Install (nodes.Get (2));
+  clientApps1.Start (Seconds (2.0));
+  clientApps1.Stop (Seconds (10.0));
+
+    ApplicationContainer clientApps2 = echoClient2.Install (nodes.Get (3));
+  clientApps2.Start (Seconds (2.0));
+  clientApps2.Stop (Seconds (10.0));
+
+  Simulator::Run ();
+  Simulator::Destroy ();
+  return 0;
+}
+
+9)Create a topology as given below
+
+       10.1.1.0                          	                                               30.1.3.0
+m0--------- m1 --------------         n1   n2   n3   n4  --------------  n5--------n6
+    point-to-point                             |     |      |      |  		point-to-point
+                                                    =============
+                                                      LAN 20.1.2.0
+
+Choose a node from point-to-point network as a client and one from the LAN as server.  Run the simulation and observe the results.
+
+
+#include "ns3/core-module.h"
+#include "ns3/network-module.h"
+#include "ns3/csma-module.h"
+#include "ns3/internet-module.h"
+#include "ns3/point-to-point-module.h"
+#include "ns3/applications-module.h"
+#include "ns3/ipv4-global-routing-helper.h"
+
+using namespace ns3;
+
+NS_LOG_COMPONENT_DEFINE ("SecondScriptExample");
+
+int 
+main (int argc, char *argv[])
+{
+  bool verbose = true;
+  uint32_t nCsma = 2;
+
+  CommandLine cmd;
+  cmd.AddValue ("nCsma", "Number of \"extra\" CSMA nodes/devices", nCsma);
+  cmd.AddValue ("verbose", "Tell echo applications to log if true", verbose);
+
+  cmd.Parse (argc,argv);
+
+  if (verbose)
+    {
+      LogComponentEnable ("UdpEchoClientApplication", LOG_LEVEL_INFO);
+      LogComponentEnable ("UdpEchoServerApplication", LOG_LEVEL_INFO);
+    }
+
+  nCsma = nCsma == 0 ? 1 : nCsma;
+
+  NodeContainer nodes;
+  nodes.Create (3);
+
+  NodeContainer nodes2;
+  nodes2.Create (3);
+
+  NodeContainer csmaNodes;
+  csmaNodes.Add (nodes.Get (2));
+  csmaNodes.Add (nodes2.Get (0));
+  csmaNodes.Create (nCsma);
+
+  PointToPointHelper pointToPoint;
+  pointToPoint.SetDeviceAttribute ("DataRate", StringValue ("5Mbps"));
+  pointToPoint.SetChannelAttribute ("Delay", StringValue ("2ms"));
+
+  NetDeviceContainer p2pDevices,p2pDevices1;
+  p2pDevices = pointToPoint.Install (nodes.Get(0),nodes.Get(1));
+  p2pDevices1 = pointToPoint.Install (nodes.Get(1),nodes.Get(2));
+
+  NetDeviceContainer p2pDevices2,p2pDevices3;
+  p2pDevices2 = pointToPoint.Install (nodes2.Get(0),nodes2.Get(1));
+  p2pDevices3 = pointToPoint.Install (nodes2.Get(1),nodes2.Get(2));
+
+
+  CsmaHelper csma;
+  csma.SetChannelAttribute ("DataRate", StringValue ("100Mbps"));
+  csma.SetChannelAttribute ("Delay", TimeValue (NanoSeconds (6560)));
+
+  NetDeviceContainer csmaDevices;
+  csmaDevices = csma.Install (csmaNodes);
+
+  InternetStackHelper stack;
+  stack.Install (nodes.Get (0));
+  stack.Install (nodes.Get (1));
+  stack.Install (csmaNodes);
+  stack.Install  (nodes2.Get (1));
+  stack.Install (nodes2.Get (2));
+
+  Ipv4AddressHelper address;
+  address.SetBase ("10.1.1.0", "255.255.255.0");
+  Ipv4InterfaceContainer p2pInterfaces;
+  p2pInterfaces = address.Assign (p2pDevices1);
+  p2pInterfaces = address.Assign (p2pDevices);
+
+  address.SetBase ("20.1.2.0", "255.255.255.0");
+  Ipv4InterfaceContainer csmaInterfaces;
+  csmaInterfaces = address.Assign (csmaDevices);
+
+  address.SetBase ("30.1.3.0", "255.255.255.0");
+  Ipv4InterfaceContainer p2pInterfaces2;
+  p2pInterfaces2 = address.Assign (p2pDevices2);
+   p2pInterfaces2 = address.Assign (p2pDevices3);
+ 
+
+  UdpEchoServerHelper echoServer (9), echoServer2 (10);
+
+  ApplicationContainer serverApps = echoServer.Install (csmaNodes.Get (nCsma));
+  serverApps.Start (Seconds (1.0));
+  serverApps.Stop (Seconds (10.0));
+
+  ApplicationContainer serverApps2 = echoServer2.Install (csmaNodes.Get (nCsma));
+  serverApps2.Start (Seconds (1.0));
+  serverApps2.Stop (Seconds (10.0));
+
+  UdpEchoClientHelper echoClient (csmaInterfaces.GetAddress (nCsma), 9);
+  echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
+  echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
+  echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
+
+  UdpEchoClientHelper echoClient2 (csmaInterfaces.GetAddress (nCsma), 10);
+  echoClient2.SetAttribute ("MaxPackets", UintegerValue (1));
+  echoClient2.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
+  echoClient2.SetAttribute ("PacketSize", UintegerValue (1024));
+
+  ApplicationContainer clientApps = echoClient.Install (nodes.Get (0));
+  clientApps.Start (Seconds (2.0));
+  clientApps.Stop (Seconds (10.0));
+
+  ApplicationContainer clientApps2 = echoClient2.Install (nodes2.Get (2));
+  clientApps2.Start (Seconds (2.0));
+  clientApps2.Stop (Seconds (10.0));
+
+  Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
+
+  pointToPoint.EnablePcapAll ("second");
+  csma.EnablePcap ("second", csmaDevices.Get (1), true);
+  pointToPoint.EnablePcapAll ("second");
+
+  Simulator::Run ();
+  Simulator::Destroy ();
+  return 0;
+}
+/*At time 2s client sent 1024 bytes to 20.1.2.3 port 9
+At time 2s client sent 1024 bytes to 20.1.2.3 port 10
+At time 2.00749s server received 1024 bytes from 10.1.1.3 port 49153
+At time 2.00749s server sent 1024 bytes to 10.1.1.3 port 49153
+At time 2.01049s server received 1024 bytes from 30.1.3.4 port 49153
+At time 2.01049s server sent 1024 bytes to 30.1.3.4 port 49153
+At time 2.01798s client received 1024 bytes from 20.1.2.3 port 10
+At time 2.02098s client received 1024 bytes from 20.1.2.3 port 9*/
+
+
+
+10)Create a topology as given below
+
+       20.1.1.0                          		
+ m0--------m1 ------------- n1   n2   n3   n4  
+     point-to-point                |     |      |      |  		
+                                    ==============
+                                         LAN 30.1.2.0
+
+#include "ns3/core-module.h"
+#include "ns3/network-module.h"
+#include "ns3/csma-module.h"
+#include "ns3/internet-module.h"
+#include "ns3/point-to-point-module.h"
+#include "ns3/applications-module.h"
+#include "ns3/ipv4-global-routing-helper.h"
+
+using namespace ns3;
+  
+NS_LOG_COMPONENT_DEFINE ("SecondScriptExample");
+
+int main(int argc,char *argv[])
+{
+
+  bool verbose = true;
+  uint32_t nCsma = 3;
+
+  CommandLine cmd;
+  cmd.AddValue ("nCsma", "Number of \"extra\" CSMA nodes/devices", nCsma);
+  cmd.AddValue ("verbose", "Tell echo applications to log if true", verbose);
+
+  cmd.Parse (argc,argv);
+
+  if (verbose)
+    {
+      LogComponentEnable("UdpEchoClientApplication", LOG_LEVEL_INFO);
+      LogComponentEnable("UdpEchoServerApplication", LOG_LEVEL_INFO);
+    }
+
+  nCsma = nCsma == 0 ? 1 : nCsma;
+
+  NodeContainer nodes;
+	nodes.Create(3);
+
+  NodeContainer csmaNodes;
+  csmaNodes.Add (nodes.Get (2));
+  csmaNodes.Create (nCsma);
+
+  PointToPointHelper pointToPoint;
+  pointToPoint.SetDeviceAttribute ("DataRate", StringValue ("5Mbps"));
+  pointToPoint.SetChannelAttribute ("Delay", StringValue ("2ms"));
+
+  NetDeviceContainer p2pDevices,p2pDevices1;
+  p2pDevices = pointToPoint.Install (nodes.Get(0),nodes.Get(1));
+  p2pDevices1 = pointToPoint.Install (nodes.Get(1),nodes.Get(2));
+
+  CsmaHelper csma;
+  csma.SetChannelAttribute ("DataRate", StringValue ("100Mbps"));
+  csma.SetChannelAttribute ("Delay", TimeValue (NanoSeconds (6560)));
+
+  NetDeviceContainer csmaDevices;
+  csmaDevices = csma.Install (csmaNodes);
+
+  InternetStackHelper stack;
+  stack.Install (nodes.Get (0));
+  stack.Install (nodes.Get (1));
+  stack.Install (csmaNodes);
+
+  Ipv4AddressHelper address;
+  address.SetBase ("20.1.1.0", "255.255.255.0");
+  Ipv4InterfaceContainer p2pInterfaces,p2pInterfaces1;
+  p2pInterfaces = address.Assign (p2pDevices1);
+  p2pInterfaces1 = address.Assign (p2pDevices);
+
+  address.SetBase ("30.1.2.0", "255.255.255.0");
+  Ipv4InterfaceContainer csmaInterfaces;
+  csmaInterfaces = address.Assign (csmaDevices);
+
+  UdpEchoServerHelper echoServer (9);
+
+  ApplicationContainer serverApps = echoServer.Install (csmaNodes.Get (nCsma));
+  serverApps.Start (Seconds (1.0));
+  serverApps.Stop (Seconds (10.0));
+
+  UdpEchoClientHelper echoClient (csmaInterfaces.GetAddress (nCsma), 9);
+  echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
+  echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.)));
+  echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
+
+  ApplicationContainer clientApps = echoClient.Install (nodes.Get (0));
+  clientApps.Start (Seconds (2.0));
+  clientApps.Stop (Seconds (10.0));
+
+  Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
+
+  pointToPoint.EnablePcapAll ("second");
+  csma.EnablePcap ("second", csmaDevices.Get (1), true);
+
+  Simulator::Run();
+  Simulator::Destroy();
+  return 0;
+
+}
+/*
+At time 2s client sent 1024 bytes to 30.1.2.4 port 9
+At time 2.00749s server received 1024 bytes from 20.1.1.3 port 49153
+At time 2.00749s server sent 1024 bytes to 20.1.1.3 port 49153
+At time 2.01698s client received 1024 bytes from 30.1.2.4 port 9
+*/
