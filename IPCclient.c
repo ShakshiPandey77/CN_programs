@@ -26,3 +26,14 @@ close(readfd);
 close(writefd);
 return 0;
 }
+
+/* on terminal
+gcc IPCclient.c -o IPCclient (enter)
+./IPCclient (enter)
+.
+.
+.
+enter file name (in the directory you have saved your program,enter any file name present in that directory): IPCclent.c
+(you will get reply in terminal of IPCserver program)
+waiting for reply..
+*/
