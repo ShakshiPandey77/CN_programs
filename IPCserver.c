@@ -38,3 +38,11 @@ int main()
     close(writefd);unlink(FIFO2);
     }
 
+/* in terminal ,
+   gcc IPCserver.c -o IPCserver (enter)
+   ./IPCserver(enter)
+   (you will get)
+   waiting for reply..
+   (after entering the file name in terminal of IPC client and enter that ,here in server you ll get the reply of that file ,
+   both the therminals for ipc server and client should be open simultaneously and first execute server program n then client)
+  */ 
